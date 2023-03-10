@@ -2,3 +2,6 @@ name = "EasyCFD2D"
 uuid = "686c1a4b-65fd-4759-bfc1-c30c897c6d8f"
 authors = ["YYB <812987139@qq.com>"]
 version = "0.1.0"
+
+[deps]
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"

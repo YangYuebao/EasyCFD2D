@@ -1,10 +1,4 @@
-#定义边界
-
-#bd1 t in [pi/2,0]
-struct bound
-    fun::Function
-    span::Vector
-end
+using EasyCFD2D
 
 function bd1(t)
     [t,0]
@@ -41,4 +35,12 @@ bounds[2]=bound(bd2,t2)
 bounds[3]=bound(bd3,t3)
 bounds[4]=bound(bd4,t4)
 
+include("PostProcess.jl")
 
+m=50
+n=40
+@time x_uv,y_uv=GSGrider(m,n,bounds)
+gridPlot(x_uv,y_uv)
+
+@time x_uv,y_uv=EasyCFD2D.JacobianGrider(m,n,bounds,maxep=1e-3,relax=0.2,displayStep=1)
+gridPlot(x_uv,y_uv)
