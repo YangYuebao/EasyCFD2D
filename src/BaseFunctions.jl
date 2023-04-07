@@ -1,4 +1,10 @@
 abstract type AbstractBound end
+abstract type AbstractBoundType end
+
+struct stillWall <: AbstractBoundType end
+struct FDOutlet <: AbstractBoundType end #fully developed outlet
+
+
 struct bound <: AbstractBound
     fun::Function
     span::Vector

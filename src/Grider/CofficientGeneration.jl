@@ -174,22 +174,20 @@ function controler(k,alpha,a,b;per=0.0)
 end
 
 function renew_coff!(n::Int64,m::Int64,alpha::Vector{Float64},beta::Vector{Float64},gamma::Vector{Float64},phi::Vector{Float64},psi::Vector{Float64},x_uv::Matrix{Float64},y_uv::Matrix{Float64})
-    du=1/(m-1)
-    dv=1/(n-1)
     k=(m-1)/(n-1)
     id = 1
     for j = 2:m-1
         for i = 2:n-1
-            alpha[id] = ((x_uv[i+1, j] - x_uv[i-1, j]) / 2 / dv)^2 + ((y_uv[i+1, j] - y_uv[i-1, j]) / 2 / dv)^2
-            beta[id] = ((x_uv[i, j+1] - x_uv[i, j-1]) * (x_uv[i+1, j] - x_uv[i-1, j]) + (y_uv[i, j+1] - y_uv[i, j-1]) * (y_uv[i+1, j] - y_uv[i-1, j])) / 4 / du / dv
-            gamma[id] = ((x_uv[i, j+1] - x_uv[i, j-1]) / 2 / du)^2 + ((y_uv[i, j+1] - y_uv[i, j-1]) / 2 / du)^2            
+            alpha[id] = ((x_uv[i+1, j] - x_uv[i-1, j]) / 2)^2 + ((y_uv[i+1, j] - y_uv[i-1, j]) / 2)^2
+            beta[id] = ((x_uv[i, j+1] - x_uv[i, j-1]) * (x_uv[i+1, j] - x_uv[i-1, j]) + (y_uv[i, j+1] - y_uv[i, j-1]) * (y_uv[i+1, j] - y_uv[i-1, j])) / 4 
+            gamma[id] = ((x_uv[i, j+1] - x_uv[i, j-1]) / 2)^2 + ((y_uv[i, j+1] - y_uv[i, j-1]) / 2)^2            
             id += 1
         end
     end
     for j in [2,m-1]
         for i=2:n-1
             id=(i-1)+(j-2)*(n-2)
-            psi[id] = -((y_uv[i+1, j] - y_uv[i-1, j]) * (y_uv[i+1, j] - 2 * y_uv[i, j] + y_uv[i-1, j]) / dv / dv + (x_uv[i+1, j] - x_uv[i-1, j]) * (x_uv[i+1, j] - 2 * x_uv[i, j] + x_uv[i-1, j]) / dv / dv) / (alpha[id]) / 2
+            psi[id] = -((y_uv[i+1, j] - y_uv[i-1, j]) * (y_uv[i+1, j] - 2 * y_uv[i, j] + y_uv[i-1, j]) + (x_uv[i+1, j] - x_uv[i-1, j]) * (x_uv[i+1, j] - 2 * x_uv[i, j] + x_uv[i-1, j])) / (alpha[id]) / 2
         end
     end
     for i=1:n-2
@@ -199,7 +197,7 @@ function renew_coff!(n::Int64,m::Int64,alpha::Vector{Float64},beta::Vector{Float
     for j = 2:m-1
         for i=[2,n-1]
             id=(i-1)+(j-2)*(n-2)
-            phi[id] = -((y_uv[i, j+1] - y_uv[i, j-1]) * (y_uv[i, j+1] - 2 * y_uv[i, j] + y_uv[i, j-1]) / du / du + (x_uv[i, j+1] - x_uv[i, j-1]) * (x_uv[i, j+1] - 2 * x_uv[i, j] + x_uv[i, j-1]) / du / du) / (gamma[id]) * k / 2
+            phi[id] = -((y_uv[i, j+1] - y_uv[i, j-1]) * (y_uv[i, j+1] - 2 * y_uv[i, j] + y_uv[i, j-1]) + (x_uv[i, j+1] - x_uv[i, j-1]) * (x_uv[i, j+1] - 2 * x_uv[i, j] + x_uv[i, j-1])) / (gamma[id]) * k / 2
         end
     end
     for i=1:m-2
