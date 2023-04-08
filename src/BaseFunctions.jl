@@ -7,6 +7,7 @@ struct FDOutlet <: AbstractBoundType end #fully developed outlet
 struct velocityInlet <: AbstractBoundType end
 struct pressureInlet <: AbstractBoundType end
 struct symetryAxis <: AbstractBoundType end
+struct generalBound <: AbstractBoundType end
 
 struct bound <: AbstractBound
     fun::Function
@@ -18,9 +19,9 @@ struct bound <: AbstractBound
 end
 
 function bound(fun::Function,span::Vector)
-    u(t)=0
-    v(t)=0
-    p(t)=0
+    u(t)=[1,0,0]
+    v(t)=[1,0,0]
+    p(t)=[1,0,0]
     bound(fun,span,u,v,p)
 end
 
