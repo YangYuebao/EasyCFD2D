@@ -2,8 +2,11 @@ abstract type AbstractBound end
 abstract type AbstractBoundType end
 
 struct stillWall <: AbstractBoundType end
+struct movingWall <: AbstractBoundType end
 struct FDOutlet <: AbstractBoundType end #fully developed outlet
-
+struct velocityInlet <: AbstractBoundType end
+struct pressureInlet <: AbstractBoundType end
+struct symetryAxis <: AbstractBoundType end
 
 struct bound <: AbstractBound
     fun::Function
