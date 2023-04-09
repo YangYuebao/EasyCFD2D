@@ -25,6 +25,31 @@ function bound(fun::Function,span::Vector)
     bound(fun,span,u,v,p)
 end
 
+function bound(fun::Function,span::Vector,::stillWall)
+    u(t)=[1,0,0]
+    v(t)=[1,0,0]
+    p(t)=[0,1,0]
+    bound(fun,span,u,v,p)
+end
+
+function bound(fun::Function,span::Vector,::movingWall,u0::Number,v0::Number)
+    u(t)=[1,0,u0]
+    v(t)=[1,0,v0]
+    p(t)=[0,1,0]
+    bound(fun,span,u,v,p)
+end
+function bound(fun::Function,span::Vector,::FDOutlet,p0::Number)
+    u(t)=[0,1,0]
+    v(t)=[0,1,0]
+    p(t)=[1,0,p0]
+    bound(fun,span,u,v,p)
+end
+
+struct velocityInlet <: AbstractBoundType end
+struct pressureInlet <: AbstractBoundType end
+struct symetryAxis <: AbstractBoundType end
+struct generalBound <: AbstractBoundType end
+
 struct extraBounds <: AbstractBound
     name::Symbol
 end
