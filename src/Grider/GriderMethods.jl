@@ -1,3 +1,8 @@
+abstract type AbstractGridMethod end
+
+struct GS <: AbstractGridMethod end
+struct Jacobian <: AbstractGridMethod end
+
 # 高斯赛德尔迭代拉普拉斯法
 function gs!(m::Int64,n::Int64,x_uv::Matrix{Float64}, y_uv::Matrix{Float64},k::Float64; maxcount::Int64=10000, ep::Float64=1e-8)
     temp = zeros(m, n) .+ Inf

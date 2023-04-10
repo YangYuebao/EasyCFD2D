@@ -38,5 +38,5 @@ n=40
 @time x_uv,y_uv=GSGrider(m,n,bounds)
 gridPlot(x_uv,y_uv)
 
-@time x_uv,y_uv=EasyCFD2D.JacobianGrider(m,n,bounds,maxep=1e-3,relax=0.2,displayStep=1)
+@time x_uv,y_uv=EasyCFD2D.JacobianGrider(m,n,bounds,maxep=1e-3,relax=0.2,displayStep=10)
 gridPlot(x_uv,y_uv)

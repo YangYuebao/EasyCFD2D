@@ -65,6 +65,10 @@ function initialField()
 end
 
 # 生成源项
-function sorceTerm()
+function sorceTerm!()
+    
+end
+
+function renewCoffField!()
     
 end
