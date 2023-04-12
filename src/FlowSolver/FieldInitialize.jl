@@ -26,9 +26,7 @@ function fieldA(x_uv::Matrix{Float64},y_uv::Matrix)
     n,m=size(x_field)
 
     # 此处可以更换为更好的初场生成函数
-    u_field=zeros(n,m)
-    v_field=zeros(n,m)
-    p_field=zeros(n,m)
+    u_field,v_field,p_field=initialField(n,m)
 
     x_u=Matrix{Float64}(undef,n,m)
     y_u=Matrix{Float64}(undef,n,m)
@@ -51,6 +49,7 @@ function fieldA(x_uv::Matrix{Float64},y_uv::Matrix)
     y_v[2:end-1,:]=(y_uv[3:end,:]-y_uv[1:end-2,:])/2
     y_v[end,:]=(3*y_uv[end-2,:]-4*y_uv[end-1,:]+y_uv[end-2,:])/2
 
+    # alpha,beta,gamma的值在网格生成的时候就已经获得过了一部分，可以不用重新计算
     alpha=x_v.^2+y_v.^2
     beta=x_u.*x_v+y_u.*y_v
     gamma=x_u.^2+y_u.^2
@@ -60,14 +59,15 @@ function fieldA(x_uv::Matrix{Float64},y_uv::Matrix)
 end
 
 # 生成初场
-function initialField()
-
+function initialField(n,m)
+    u_field=zeros(n,m)
+    v_field=zeros(n,m)
+    p_field=zeros(n,m)
+    return u_field,v_field,p_field
 end
 
 # 生成源项
-function sorceTerm!()
-    
-end
+
 
 function renewCoffField!()
     
