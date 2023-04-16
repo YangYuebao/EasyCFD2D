@@ -1,0 +1,3 @@
+abstract type AbstractConvectionTermScheme end
+
+struct SecondOrderUpwind <:AbstractConvectionTermScheme end

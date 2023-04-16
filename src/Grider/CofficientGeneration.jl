@@ -36,6 +36,7 @@ function initialize_xy_uv(bounds::Vector{bound},n::Int64,m::Int64)
     return x_uv,y_uv
 end
 
+#=
 function index_generation(n::Int64,m::Int64)    
     row = Vector{Int64}(undef, 9 * m * n - 24 * (m + n) + 64) # 不变
     col = Vector{Int64}(undef, 9 * m * n - 24 * (m + n) + 64) # 不变
@@ -164,6 +165,18 @@ function index_generation(n::Int64,m::Int64)
         id
     ]
     return row,col
+end
+=#
+
+function index_generation_grid(n::Int64,m::Int64)
+    place=Vector{Vector{Int64}}(undef,0)
+
+    for j=-1:1
+        for i=-1:1
+            push!(place,[i,j])
+        end
+    end
+    index_generation(n,m,place)
 end
 
 function controler(k,alpha,a,b;per=0.0)
