@@ -36,6 +36,10 @@ function index_generation(n::Int64,m::Int64,::SecondOrderUpwind)
     index_generation(n,m,place)
 end
 
-function renew_coff_field!()
-    
+function renew_coff_field!(n::Int64,m::Int64,val::Vector{Float64},b::Vector{Float64})
+    for j=1:m
+        for i=1:n
+            
+
+    end
 end
