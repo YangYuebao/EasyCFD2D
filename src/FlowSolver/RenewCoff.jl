@@ -36,10 +36,32 @@ function index_generation(n::Int64,m::Int64,::SecondOrderUpwind)
     index_generation(n,m,place)
 end
 
-function renew_coff_field!(n::Int64,m::Int64,val::Vector{Float64},b::Vector{Float64})
+function renew_coff_field!(::SecondOrderUpwind,n::Int64,m::Int64,val::Vector{Float64},b::Vector{Float64})
     for j=1:m
         for i=1:n
-            
+            if i>=3 && i<=n-2 && j>=3 && j<=m-2
+                val_push=[
+                    0,
+                    
+                ]
+                b_push=0
+                if u[i,j]+u[i,j+1]>0 && u[i,j-1]+u[i,j]>0
 
+                elseif u[i,j]+u[i,j+1]>=0 && u[i,j-1]+u[i,j]<=0
+
+                elseif u[i,j]+u[i,j+1]<=0 && u[i,j-1]+u[i,j]>=0
+
+                else u[i,j]+u[i,j+1]<0 && u[i,j-1]+u[i,j]<0
+
+                end
+            else
+            
+            end
+        end
     end
+    #=
+    function getCoff(i::Int64,j::Int64)
+        if
+    end
+    =#
 end
