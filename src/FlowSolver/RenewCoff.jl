@@ -42,7 +42,12 @@ function renew_coff_field!(::SecondOrderUpwind,n::Int64,m::Int64,val::Vector{Flo
             if i>=3 && i<=n-2 && j>=3 && j<=m-2
                 val_push=[
                     0,
-                    
+                    0.125*mu*(2*beta[i,j]/Ja[i,j]+beta[i,j-1]/Ja[i,j-1]+beta[i-1,j]/Ja[i-1,j]),
+                    0.125*mu*(+beta[i,j-1]/Ja[i,j-1]-beta[i+1,j]/Ja[i+1,j]),
+                    -0.125*mu*(2*beta[i,j]/Ja[i,j]+beta[i,j+1]/Ja[i,j+1]+beta[i-1,j]/Ja[i-1,j]),
+                    0,
+                    -0.125*mu*(+beta[i,j+1]/Ja[i,j+1]-beta[i-1,j]/Ja[i-1,j]),
+                    -0.125*mu*(2*beta[i,j]/Ja[i,j]+beta[i,j+1]/Ja[i,j+1]+beta[i-1,j]/Ja[i-1,j]),
                 ]
                 b_push=0
                 if u[i,j]+u[i,j+1]>0 && u[i,j-1]+u[i,j]>0
