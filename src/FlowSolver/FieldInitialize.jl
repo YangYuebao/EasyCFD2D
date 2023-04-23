@@ -23,7 +23,7 @@ end
 =#
 
 function fieldA(x_uv::Matrix{Float64},y_uv::Matrix)
-    n,m=size(x_field)
+    n,m=size(x_uv)
 
     # 此处可以更换为更好的初场生成函数
     u_field,v_field,p_field=initialField(n,m)

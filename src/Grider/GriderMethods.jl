@@ -36,7 +36,7 @@ end
 # 雅克比迭代边界正交改良法
 function JacobianGrider(m::Int64,n::Int64,bounds::Vector{bound};maxcount::Int64=10000,maxep::Float64=1e-3,relax::Float64=1.0,displayStep::Int64=20)
     x_uv,y_uv=initialize_xy_uv(bounds,n,m)
-    row,col=index_generation_grid(n,m)
+    row,col=index_generation_grid(n-2,m-2)
 
     val = Vector{Float64}(undef, 9 * m * n - 24 * (m + n) + 64) # 系数矩阵
     alpha = Vector{Float64}(undef, (m - 2) * (n - 2))       # 

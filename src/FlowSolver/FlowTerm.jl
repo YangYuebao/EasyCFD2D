@@ -1,6 +1,6 @@
-abstract type AbstractConvectionTermScheme end
+abstract type ConvectionScheme <: AbstractScheme end
 
-struct SecondOrderUpwind <:AbstractConvectionTermScheme end
+struct SecondOrderUpwind <:ConvectionScheme end
 
 function getPlace(::SecondOrderUpwind)
     place=Vector{Vector{Int64}}(undef,0)
@@ -12,7 +12,3 @@ function getPlace(::SecondOrderUpwind)
     return place
 end
 
-function getCoff(::SecondOrderUpwind)
-    coff=zeros(13)
-    
-end

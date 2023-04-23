@@ -56,9 +56,10 @@ end
 # 压力入口，形式上和充分发展出口相同
 @deprecate bound(fun::Function,span::Vector,::pressureInlet,p0::Number) bound(fun,span,FDOutlet(),p0)
 
+# 对称轴
 function bound(fun::Function,span::Vector,::symetryAxis)
     u(t)=[0,1,0]
-    v(t)=[0,1,0]
+    v(t)=[1,0,0]
     p(t)=[0,1,0]
     bound(fun,span,u,v,p)
 end
