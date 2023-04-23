@@ -46,10 +46,10 @@ function fieldDiff(x_uv::Matrix{Float64},n::Int64,m::Int64)
     x_v=Matrix{Float64}(undef,n,m)
     x_u[:,1]=(-3*x_uv[:,1]+4*x_uv[:,2]-x_uv[:,3])/2
     x_u[:,2:end-1]=(x_uv[:,3:end]-x_uv[:,1:end-2])/2
-    x_u[:,end]=(3*x_uv[:,end-2]-4*x_uv[:,end-1]+x_uv[:,end-2])/2
-    x_v[1,:]=(-3*x_uv[1,:]+4*x_uv[2,:]-x_uv[3,:])/2
-    x_v[2:end-1,:]=(x_uv[3:end,:]-x_uv[1:end-2,:])/2
-    x_v[end,:]=(3*x_uv[end-2,:]-4*x_uv[end-1,:]+x_uv[end-2,:])/2
+    x_u[:,end]=(3*x_uv[:,end]-4*x_uv[:,end-1]+x_uv[:,end-2])/2
+    x_v[1,:]=-(-3*x_uv[1,:]+4*x_uv[2,:]-x_uv[3,:])/2
+    x_v[2:end-1,:]=-(x_uv[3:end,:]-x_uv[1:end-2,:])/2
+    x_v[end,:]=-(3*x_uv[end,:]-4*x_uv[end-1,:]+x_uv[end-2,:])/2
     return x_u,x_v
 end
 

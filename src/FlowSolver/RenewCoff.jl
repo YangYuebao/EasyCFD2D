@@ -121,8 +121,8 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                     0
                 ]
                 val_push[3] -= 0.5 * mu * (alpha[i, j] / Ja[i, j] + alpha[i, j-1] / Ja[i, j-1])
-                val_push[6] -= 0.5 * mu * (alpha[i, j] / Ja[i, j] + alpha[i-1, j] / Ja[i-1, j])
-                val_push[8] -= 0.5 * mu * (alpha[i, j] / Ja[i, j] + alpha[i+1, j] / Ja[i+1, j])
+                val_push[6] -= 0.5 * mu * (gamma[i, j] / Ja[i, j] + gamma[i-1, j] / Ja[i-1, j])
+                val_push[8] -= 0.5 * mu * (gamma[i, j] / Ja[i, j] + gamma[i+1, j] / Ja[i+1, j])
                 val_push[11] -= 0.5 * mu * (alpha[i, j] / Ja[i, j] + alpha[i, j+1] / Ja[i, j+1])
                 val_push[7] = -val_push[3] - val_push[6] - val_push[8] - val_push[11]
 
@@ -188,8 +188,8 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                     0
                 ]
                 val_push[3] -= 0.5 * mu * (alpha[i, j] / Ja[i, j] + alpha[i, j-1] / Ja[i, j-1])
-                val_push[6] -= 0.5 * mu * (alpha[i, j] / Ja[i, j] + alpha[i-1, j] / Ja[i-1, j])
-                val_push[8] -= 0.5 * mu * (alpha[i, j] / Ja[i, j] + alpha[i+1, j] / Ja[i+1, j])
+                val_push[6] -= 0.5 * mu * (gamma[i, j] / Ja[i, j] + gamma[i-1, j] / Ja[i-1, j])
+                val_push[8] -= 0.5 * mu * (gamma[i, j] / Ja[i, j] + gamma[i+1, j] / Ja[i+1, j])
                 val_push[11] -= 0.5 * mu * (alpha[i, j] / Ja[i, j] + alpha[i, j+1] / Ja[i, j+1])
                 val_push[7] = -val_push[3] - val_push[6] - val_push[8] - val_push[11]
 
