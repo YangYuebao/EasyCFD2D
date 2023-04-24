@@ -78,5 +78,5 @@ function JacobianGrider(m::Int64,n::Int64,bounds::Vector{bound};maxcount::Int64=
         mycount+=1
     end
     println(mycount-1," log10(ep)=",log10(ep))
-    return x_uv,y_uv
+    return Matrix(x_uv[end:-1:1,:]'),Matrix(y_uv[end:-1:1,:]')
 end

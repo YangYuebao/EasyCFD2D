@@ -26,7 +26,7 @@ end
 t4=[0,5]
 
 bounds=Vector{bound}(undef,4)
-bounds[1]=bound(bd1,t1,pressureInlet(),5)
+bounds[1]=bound(bd1,t1,pressureInlet(),200)
 bounds[2]=bound(bd2,t2,symetryAxis())
 bounds[3]=bound(bd3,t3,FDOutlet(),0)
 bounds[4]=bound(bd4,t4,stillWall())
@@ -34,16 +34,14 @@ bounds[4]=bound(bd4,t4,stillWall())
 #include("../Grider_test/PostProcess.jl")
 
 m=5
-n=5
+n=10
 #x_uv,y_uv=GSGrider(m,n,bounds)
 x_uv,y_uv=EasyCFD2D.JacobianGrider(n,m,bounds,maxep=1e-3,relax=0.2,displayStep=10)
 #gridPlot(x_uv,y_uv)
-x_uv=Matrix(x_uv[end:-1:1,:]')
-y_uv=Matrix(y_uv[end:-1:1,:]')
 
 # 初始化
 begin
-    u,v,p,S,x_u,y_u,x_v,y_v,alpha,beta,gamma,Ja=EasyCFD2D.fieldA(x_uv,y_uv)
+    u,v,p,x_u,y_u,x_v,y_v,alpha,beta,gamma,Ja=EasyCFD2D.fieldA(x_uv,y_uv)
     row,col=EasyCFD2D.index_generation(n,m,EasyCFD2D.getPlace(EasyCFD2D.SecondOrderUpwind()))
     rowp,colp=EasyCFD2D.index_generation(n,m,EasyCFD2D.getPlace(EasyCFD2D.Point5()))
 
@@ -78,15 +76,15 @@ begin
     bp=Vector{Float64}(undef,0)
 end
 
-EasyCFD2D.SIMPLE(n,m,valp,bp,rho,x_v,y_u,y_v,x_u,Apu,Apv,p,U,V,alpha,gamma,:p,bounds)
+EasyCFD2D.SIMPLE(n,m,valp,bp,rho,x_v,y_u,y_v,x_u,Apu,Apv,p,U,V,zeros(n,m),alpha,gamma,:p,bounds)
 
 B=sparse(rowp,colp,valp)
 
-#p+=reshape(B\bp,n,m)
+p+=reshape(B\bp,n,m)
 u
 end
 
-
+#=
 begin
 outputA=Matrix(A)
 outputb=b
@@ -100,3 +98,4 @@ for i=1:n*m
 end
 close(f)
 end
+=#

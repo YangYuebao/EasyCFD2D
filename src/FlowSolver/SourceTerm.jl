@@ -1,11 +1,13 @@
 # 目前密度是常数
-function sorceTerm!(::Cylindrical, S0::Matrix, S::Matrix, rho::Number, ga::Number, phi_field::Matrix, v_field::Matrix, grid::Grid)
+# S是最终的源项，S0是
+function sorceTerm!(::Cylindrical, S::Matrix{Float64}, rho::Number, mu::Number, phi_field::Matrix{Float64}, v_field::Matrix{Float64}, y_uv::Matrix{Float64},x_u::Matrix{Float64},x_v::Matrix{Float64},Ja::Matrix{Float64})
     phi_u, phi_v = fieldDiff(phi_field)
-    S = S0 + ( - rho * v_field .* phi_field ./ grid.y_uv) .* grid.Ja + ga ./ grid.y_uv .* (-grid.x_v .* phi_u + grid.x_u .* phi_v)
+    temp = ( - rho * v_field[1:end-1,:] .* phi_field[1:end-1,:] ./ y_uv[1:end-1,:]) .* Ja[1:end-1,:] + mu ./ y_uv[1:end-1,:] .* (-x_v[1:end-1,:] .* phi_u[1:end-1,:] + x_u[1:end-1,:] .* phi_v[1:end-1,:])
+    S[1:end-1,:] += temp
+    #S[end,:] += 2*temp[end,:] - temp[end-1,:]
+    S
 end
 
-function sorceTerm!(::Rectangular, S0::Matrix, S::Matrix, grid::Grid)
-    S = S0
+function sorceTerm!(::Rectangular, S::Matrix{Float64}, rho::Number, mu::Number, phi_field::Matrix{Float64}, v_field::Matrix{Float64}, y_uv::Matrix{Float64},x_u::Matrix{Float64},x_v::Matrix{Float64},Ja::Matrix{Float64})
+    S
 end
-
-

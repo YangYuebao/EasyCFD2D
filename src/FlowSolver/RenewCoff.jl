@@ -293,7 +293,7 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                 continue
             end
             if i == n && j == 1
-                val_push = [
+                val_push = 0.5*[
                     0,
                     0.5 * rho * V[n, 1] - mu * 0.5 * (gamma[n, 1] / Ja[n, 1] + gamma[n-1, 1] / Ja[n-1, 1] + beta[n, 1] / Ja[n, 1] + beta[n, 2] / Ja[n, 2]),
                     0,
@@ -307,7 +307,7 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                 continue
             end
             if i == n && j == m
-                val_push = [
+                val_push = 0.5*[
                     0,
                     0,
                     -0.5 * rho * U[n, m] - mu * 0.5 * (beta[n, m] / Ja[n, m] + beta[n-1, m] / Ja[n-1, m] + alpha[n, m-1] / Ja[n, m-1] + alpha[n, m] / Ja[n, m]),
@@ -321,7 +321,7 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                 continue
             end
             if i == 1 && j == m
-                val_push = [
+                val_push = 0.5*[
                     0,
                     -0.5 * rho * U[1, m] - mu * 0.5 * (beta[1, m] / Ja[1, m] + beta[2, m] / Ja[2, m] + alpha[1, m-1] / Ja[1, m-1] + alpha[1, m] / Ja[1, m]),
                     0,

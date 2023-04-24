@@ -27,7 +27,6 @@ function fieldA(x_uv::Matrix{Float64},y_uv::Matrix)
 
     # 此处可以更换为更好的初场生成函数
     u_field,v_field,p_field=initialField(n,m)
-    sourceTerm=zeros(n,m)
 
     x_u,x_v=fieldDiff(x_uv,n,m)
     y_u,y_v=fieldDiff(y_uv,n,m)
@@ -38,7 +37,7 @@ function fieldA(x_uv::Matrix{Float64},y_uv::Matrix)
     gamma=x_u.^2+y_u.^2
     Ja=x_u.*y_v-x_v.*y_u
 
-    return u_field,v_field,p_field,sourceTerm,x_u,y_u,x_v,y_v,alpha,beta,gamma,Ja
+    return u_field,v_field,p_field,x_u,y_u,x_v,y_v,alpha,beta,gamma,Ja
 end
 
 function fieldDiff(x_uv::Matrix{Float64},n::Int64,m::Int64)
