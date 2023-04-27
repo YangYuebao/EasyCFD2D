@@ -1,107 +1,5 @@
 
-function index_generation(n::Int64, m::Int64, ::SecondOrderUpwind)
-    place = Vector{Vector{Int64}}(undef, 0)
-    for j = -2:2
-        for i = -(2 - abs(j)):2-abs(j)
-            push!(place, [i, j])
-        end
-    end
-    index_generation(n, m, place)
-end
-
-function toABC(n::Int64,m::Int64,i::Int64, j::Int64,alpha::Matrix{Float64},gamma::Matrix{Float64}, phi_symbol::Symbol, bounds::Vector{bound})
-    if i == 1 && j == 1
-        temp1 = -getproperty(bounds[1], phi_symbol)(bounds[1].span[1])
-        temp4 = getproperty(bounds[4], phi_symbol)(bounds[4].span[2])
-        if temp1[2] == 0
-            return temp1
-        end
-        if temp4[2] == 0
-            return temp4
-        end
-        return [
-            temp1[1] * temp4[2] * sqrt(alpha[1, 1]) - temp4[1] * temp1[2] * sqrt(gamma[1, 1]),
-            temp1[2] * temp4[2],
-            temp1[3] * temp4[2] * sqrt(alpha[1, 1]) - temp4[3] * temp1[2] * sqrt(gamma[1, 1]),
-        ]
-    end
-    if i == n && j == 1
-        temp1 = -getproperty(bounds[1], phi_symbol)(bounds[1].span[2])
-        temp2 = -getproperty(bounds[2], phi_symbol)(bounds[2].span[1])
-        if temp1[2] == 0
-            return temp1
-        end
-        if temp2[2] == 0
-            return temp2
-        end
-        return [
-            temp1[1] * temp2[2] * sqrt(alpha[n, 1]) + temp2[1] * temp1[2] * sqrt(gamma[n, 1]),
-            temp1[2] * temp2[2],
-            temp1[3] * temp2[2] * sqrt(alpha[n, 1]) + temp2[3] * temp1[2] * sqrt(gamma[n, 1]),
-        ]
-    end
-    if i == n && j == m
-        temp3 = getproperty(bounds[3], phi_symbol)(bounds[3].span[1])
-        temp2 = -getproperty(bounds[2], phi_symbol)(bounds[2].span[2])
-        if temp3[2] == 0
-            return temp3
-        end
-        if temp2[2] == 0
-            return temp2
-        end
-        return [
-            temp2[1] * temp3[2] * sqrt(alpha[n, m]) - temp3[1] * temp2[2] * sqrt(gamma[n, m]),
-            temp3[2] * temp2[2],
-            temp2[3] * temp3[2] * sqrt(alpha[n, m]) - temp3[3] * temp2[2] * sqrt(gamma[n, m]),
-        ]
-    end
-    if i == 1 && j == m
-        temp3 = getproperty(bounds[3], phi_symbol)(bounds[3].span[2])
-        temp4 = getproperty(bounds[4], phi_symbol)(bounds[4].span[1])
-        if temp3[2] == 0
-            return temp3
-        end
-        if temp4[2] == 0
-            return temp4
-        end
-        return -[
-            temp4[1] * temp3[2] * sqrt(alpha[1, m]) + temp3[1] * temp4[2] * sqrt(gamma[1, m]),
-            temp3[2] * temp4[2],
-            temp4[3] * temp3[2] * sqrt(alpha[1, m]) + temp3[3] * temp4[2] * sqrt(gamma[1, m]),
-        ]
-    end
-    if i == 1
-        t = (bounds[4].span[2] - bounds[4].span[1]) * (j - 1) / (m - 1)
-        return getproperty(bounds[4], phi_symbol)(t)
-    end
-    if i == n
-        t = (bounds[2].span[2] - bounds[2].span[1]) * (j - 1) / (m - 1)
-        return -getproperty(bounds[2], phi_symbol)(t)
-    end
-    if j == 1
-        t = (bounds[1].span[2] - bounds[1].span[1]) * (i - 1) / (n - 1)
-        return -getproperty(bounds[1], phi_symbol)(t)
-    end
-    if j == m
-        t = (bounds[3].span[2] - bounds[3].span[1]) * (i - 1) / (n - 1)
-        return getproperty(bounds[3], phi_symbol)(t)
-    end
-end
-
-function to_val_index(n::Int64,m::Int64,i::Int64, j::Int64, scheme::AbstractScheme)
-    place = getPlace(scheme)
-    t = length(place)
-    res = ones(Bool, t)
-    for k = 1:t
-        place[k] += [i, j]
-        if place[k][1] < 1 || place[k][1] > n || place[k][2] < 1 || place[k][2] > m
-            res[k] = false
-        end
-    end
-    return res
-end
-
-function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64, rho::Float64, val::Vector{Float64}, b::Vector{Float64},alpha::Matrix{Float64},beta::Matrix{Float64},gamma::Matrix{Float64},Ja::Matrix{Float64}, U::Matrix{Float64}, V::Matrix{Float64}, phi::Matrix{Float64}, S::Matrix{Float64},Ap::Matrix{Float64}, phi_symbol::Symbol, bounds::Vector{bound})
+function renew_coff_field!(::Cylindrical,::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64, rho::Float64, val::Vector{Float64}, b::Vector{Float64},alpha::Matrix{Float64},beta::Matrix{Float64},gamma::Matrix{Float64},Ja::Matrix{Float64},x_u::Matrix{Float64},x_v::Matrix{Float64},y_u::Matrix{Float64},y_v::Matrix{Float64}, U::Matrix{Float64}, V::Matrix{Float64},u::Matrix{Float64}, v::Matrix{Float64}, x_uv::Matrix{Float64}, y_uv::Matrix{Float64}, phi::Matrix{Float64}, S::Matrix{Float64},Ap::Matrix{Float64}, phi_symbol::Symbol, bounds::Vector{bound})
     for j = 1:m
         for i = 1:n
             if i >= 3 && i <= n - 2 && j >= 3 && j <= m - 2 #内点
@@ -125,6 +23,13 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                 val_push[8] -= 0.5 * mu * (gamma[i, j] / Ja[i, j] + gamma[i+1, j] / Ja[i+1, j])
                 val_push[11] -= 0.5 * mu * (alpha[i, j] / Ja[i, j] + alpha[i, j+1] / Ja[i, j+1])
                 val_push[7] = -val_push[3] - val_push[6] - val_push[8] - val_push[11]
+                
+                # 柱坐标系的系数不同处
+                val_push[7]+=rho*v[i,j]/y_uv[i,j]*Ja[i,j]
+                val_push[3]-=mu*x_v[i,j]/y_uv[i,j]/2
+                val_push[6]-=mu*x_u[i,j]/y_uv[i,j]/2
+                val_push[8]+=mu*x_u[i,j]/y_uv[i,j]/2
+                val_push[11]+=mu*x_v[i,j]/y_uv[i,j]/2
 
                 b_push = S[i, j]
                 if U[i, j] + U[i, j+1] > 0 && U[i, j-1] + U[i, j] > 0
@@ -192,6 +97,12 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                 val_push[8] -= 0.5 * mu * (gamma[i, j] / Ja[i, j] + gamma[i+1, j] / Ja[i+1, j])
                 val_push[11] -= 0.5 * mu * (alpha[i, j] / Ja[i, j] + alpha[i, j+1] / Ja[i, j+1])
                 val_push[7] = -val_push[3] - val_push[6] - val_push[8] - val_push[11]
+
+                val_push[7]+=rho*v[i,j]/y_uv[i,j]*Ja[i,j]
+                val_push[3]-=mu*x_v[i,j]/y_uv[i,j]/2
+                val_push[6]-=mu*x_u[i,j]/y_uv[i,j]/2
+                val_push[8]+=mu*x_u[i,j]/y_uv[i,j]/2
+                val_push[11]+=mu*x_v[i,j]/y_uv[i,j]/2
 
                 b_push = S[i, j]
 
@@ -277,7 +188,7 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                 push!(b, bd_coff[3] / bd_coff[1])
                 continue
             end
-            # 2023年4月24日01:56:32
+
             if i == 1 && j == 1
                 val_push = 0.5*[
                     0,
@@ -288,6 +199,12 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                     0
                 ]
                 val_push[1] = -val_push[2] - val_push[4] + bd_coff[1] / bd_coff[2]
+
+                val_push[1]+=rho*v[i,j]/y_uv[i,j]*Ja[i,j]*0.25
+                val_push[1]-=(mu*x_v[i,j]/y_uv[i,j]/2+mu*x_u[i,j]/y_uv[i,j]/2)*0.5
+                val_push[2]+=mu*x_u[i,j]/y_uv[i,j]/2*0.5
+                val_push[4]+=mu*x_v[i,j]/y_uv[i,j]/2*0.5
+
                 push!(val, val_push...)
                 push!(b, bd_coff[3] / bd_coff[2] + S[i, j] * 0.25)
                 continue
@@ -302,6 +219,7 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                     0
                 ]
                 val_push[3] = -val_push[2] - val_push[5] + bd_coff[1] / bd_coff[2]
+
                 push!(val, val_push...)
                 push!(b, bd_coff[3] / bd_coff[2] + S[i, j] * 0.25)
                 continue
@@ -316,6 +234,7 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                     0
                 ]
                 val_push[6] = -val_push[3] - val_push[5] + bd_coff[1] / bd_coff[2]
+
                 push!(val, val_push...)
                 push!(b, bd_coff[3] / bd_coff[2] + S[i, j] * 0.25)
                 continue
@@ -330,6 +249,12 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                     0
                 ]
                 val_push[4] = -val_push[2] - val_push[5] + bd_coff[1] / bd_coff[2]
+
+                val_push[4]+=rho*v[i,j]/y_uv[i,j]*Ja[i,j]*0.25
+                val_push[4]+=(mu*x_v[i,j]/y_uv[i,j]/2-mu*x_u[i,j]/y_uv[i,j]/2)*0.5
+                val_push[2]-=mu*x_v[i,j]/y_uv[i,j]/2*0.5
+                val_push[5]+=mu*x_u[i,j]/y_uv[i,j]/2*0.5
+
                 push!(val, val_push...)
                 push!(b, bd_coff[3] / bd_coff[2] + S[i, j] * 0.25)
                 continue
@@ -339,6 +264,15 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                 val_push[11] = +rho * U[i, j] / 4 - mu * 0.25 * (alpha[i, j] / Ja[i, j] + alpha[i, j+1] / Ja[i, j+1]) - mu * 0.25 * (beta[i, j] / Ja[i, j] + beta[i+1, j] / Ja[i+1, j])
                 val_push[3] = -rho * U[i, j] / 4 - mu * 0.25 * (alpha[i, j] / Ja[i, j] + alpha[i, j-1] / Ja[i, j-1]) + mu * 0.25 * (beta[i, j] / Ja[i, j] + beta[i-1, j] / Ja[i-1, j])
                 val_push[7] = -sum(val_push) + bd_coff[1] / bd_coff[2] * sqrt(gamma[i, j])
+                
+
+                val_push[7]+=rho*v[i,j]/y_uv[i,j]*Ja[i,j]*0.5
+                val_push[3]-=mu*x_v[i,j]/y_uv[i,j]/2*0.5
+                val_push[7]-=mu*x_u[i,j]/y_uv[i,j]/2
+                val_push[8]+=mu*x_u[i,j]/y_uv[i,j]/2
+                val_push[11]+=mu*x_v[i,j]/y_uv[i,j]/2*0.5
+
+
                 push!(val, val_push[findall(x -> x == true, to_val)]...)
                 push!(b, bd_coff[3] / bd_coff[2] * sqrt(gamma[i, j]) + S[i, j] * 0.5)
                 continue
@@ -348,6 +282,7 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                 val_push[11] = +rho * U[i, j] / 4 - mu * 0.25 * (alpha[i, j] / Ja[i, j] + alpha[i, j+1] / Ja[i, j+1]) + mu * 0.25 * (beta[i, j] / Ja[i, j] + beta[i-1, j] / Ja[i-1, j])
                 val_push[3] = -rho * U[i, j] / 4 - mu * 0.25 * (alpha[i, j] / Ja[i, j] + alpha[i, j-1] / Ja[i, j-1]) - mu * 0.25 * (beta[i, j] / Ja[i, j] + beta[i-1, j] / Ja[i-1, j])
                 val_push[7] = -sum(val_push) + bd_coff[1] / bd_coff[2] * sqrt(gamma[i, j])
+
                 push!(val, val_push[findall(x -> x == true, to_val)]...)
                 push!(b, bd_coff[3] / bd_coff[2] * sqrt(gamma[i, j]) + S[i, j] * 0.5)
                 continue
@@ -357,6 +292,14 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                 val_push[8] = -rho * V[i, j] / 4 - mu * 0.25 * (beta[i, j] / Ja[i, j] + beta[i, j+1] / Ja[i, j+1]) - mu * 0.25 * (gamma[i, j] / Ja[i, j] + gamma[i+1, j] / Ja[i+1, j])
                 val_push[11] = rho * U[i, j] / 2 - mu * 0.5 * (alpha[i, j] / Ja[i, j] + alpha[i, j+1] / Ja[i, j+1]) + mu * 0.25 * (beta[i-1, j] / Ja[i-1, j] - beta[i+1, j] / Ja[i+1, j])
                 val_push[7] = -sum(val_push) + bd_coff[1] / bd_coff[2] * sqrt(alpha[i, j])
+
+
+                val_push[7]+=rho*v[i,j]/y_uv[i,j]*Ja[i,j]*0.5
+                val_push[7]-=mu*x_v[i,j]/y_uv[i,j]/2
+                val_push[6]-=mu*x_u[i,j]/y_uv[i,j]/2*0.5
+                val_push[8]+=mu*x_u[i,j]/y_uv[i,j]/2*0.5
+                val_push[11]+=mu*x_v[i,j]/y_uv[i,j]/2
+
                 push!(val, val_push[findall(x -> x == true, to_val)]...)
                 push!(b, bd_coff[3] / bd_coff[2] * sqrt(alpha[i, j]) + S[i, j] * 0.5)
                 continue
@@ -366,6 +309,13 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
                 val_push[8] = -rho * V[i, j] / 4 + mu * 0.25 * (beta[i, j] / Ja[i, j] + beta[i, j-1] / Ja[i, j-1]) - mu * 0.25 * (gamma[i, j] / Ja[i, j] + gamma[i+1, j] / Ja[i+1, j])
                 val_push[3] = -rho * U[i, j] / 2 - mu * 0.5 * (alpha[i, j] / Ja[i, j] + alpha[i, j-1] / Ja[i, j-1]) - mu * 0.25 * (beta[i-1, j] / Ja[i-1, j] - beta[i+1, j] / Ja[i+1, j])
                 val_push[7] = -sum(val_push) + bd_coff[1] / bd_coff[2] * sqrt(alpha[i, j])
+
+                val_push[7]+=rho*v[i,j]/y_uv[i,j]*Ja[i,j]*0.5
+                val_push[3]-=mu*x_v[i,j]/y_uv[i,j]/2
+                val_push[6]-=mu*x_u[i,j]/y_uv[i,j]/2*0.5
+                val_push[8]+=mu*x_u[i,j]/y_uv[i,j]/2*0.5
+                val_push[7]+=mu*x_v[i,j]/y_uv[i,j]/2
+
                 push!(val, val_push[findall(x -> x == true, to_val)]...)
                 push!(b, bd_coff[3] / bd_coff[2] * sqrt(alpha[i, j]) + S[i, j] * 0.5)
                 continue
@@ -376,10 +326,4 @@ function renew_coff_field!(::SecondOrderUpwind, n::Int64, m::Int64, mu::Float64,
     Ap[2:end-1,m]=Ap[2:end-1,m-1]
     Ap[1,2:end-1]=Ap[2,2:end-1]
     Ap[n,2:end-1]=Ap[n-1,2:end-1]
-end
-
-function getUV(u::Matrix{Float64}, v::Matrix{Float64}, x_u::Matrix{Float64}, x_v::Matrix{Float64}, y_u::Matrix{Float64}, y_v::Matrix{Float64})
-    U = u .* y_v - v .* x_u
-    V = v .* x_u - u .* y_u
-    return U, V
 end

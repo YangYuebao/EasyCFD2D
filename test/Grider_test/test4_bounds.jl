@@ -45,10 +45,10 @@ bounds[4]=bound(bd4,t4)
 
 include("PostProcess.jl")
 
-m=50
-n=40
-@time x_uv,y_uv=GSGrider(m,n,bounds)
-gridPlot(x_uv,y_uv)
+m=51
+n=41
+#@time x_uv,y_uv=GSGrider(m,n,bounds)
+#gridPlot(x_uv,y_uv)
 
 @time x_uv,y_uv=EasyCFD2D.JacobianGrider(m,n,bounds,maxep=1e-3,relax=0.2,displayStep=1)
 gridPlot(x_uv,y_uv)

@@ -21,14 +21,10 @@ function solvefield(coodinate::AbstractCoodinateTypes, convectionSecheme::T, x_u
 
         Su = p_v .* y_u - p_u .* y_v
         Sv = p_u .* x_v - p_v .* x_u
-
-        sorceTerm!(coodinate, Su, rho, mu, u, v, y_uv, x_u, x_v, Ja)
-        sorceTerm!(coodinate, Sv, rho, mu, v, v, y_uv, x_u, x_v, Ja)
-
         # 生成系数
-        renew_coff_field!(convectionSecheme, n, m, mu, rho, valu, bu, alpha, beta, gamma, Ja, U, V, u, Su, Apu, :u, bounds)
+        renew_coff_field!(coodinate,convectionSecheme, n, m, mu, rho, valu, bu, alpha, beta, gamma, Ja,x_u,x_v,y_u,y_v, U, V, u, v, x_uv, y_uv, u, Su, Apu, :u, bounds)
 
-        renew_coff_field!(convectionSecheme, n, m, mu, rho, valv, bv, alpha, beta, gamma, Ja, U, V, v, Sv, Apv, :v, bounds)
+        renew_coff_field!(coodinate,convectionSecheme, n, m, mu, rho, valv, bv, alpha, beta, gamma, Ja,x_u,x_v,y_u,y_v, U, V, u, v, x_uv, y_uv, v, Sv, Apv, :v, bounds)
 
         A = sparse(row, col, valu)
         u = reshape(A \ bu, n, m)
@@ -38,9 +34,8 @@ function solvefield(coodinate::AbstractCoodinateTypes, convectionSecheme::T, x_u
 
         valp = Vector{Float64}(undef, 0)
         bp = Vector{Float64}(undef, 0)
-        Sp = zeros(n, m)
-        sorceTerm!(coodinate, Sp, rho, mu, ones(n, m), v, y_uv, x_u, x_v, Ja)
-        SIMPLE(n, m, valp, bp, rho, x_v, y_u, y_v, x_u, Apu, Apv, p, U, V, Sp, alpha, gamma, :p, bounds)
+
+        SIMPLE(coodinate, n, m, valp, bp, rho, x_u,x_v,y_u,y_v, Apu, Apv, p, U, V,u,v,x_uv,y_uv,Ja, alpha, gamma, :p, bounds)
 
         A = sparse(rowp, colp, valp)
 

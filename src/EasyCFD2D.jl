@@ -14,7 +14,8 @@ include("./Grider/GriderMethods.jl")
 include("./FlowSolver/FieldInitialize.jl")
 include("./FlowSolver/FlowTerm.jl")
 include("./FlowSolver/PressureVelocityCouple.jl")
-include("./FlowSolver/RenewCoff.jl")
+include("./FlowSolver/RenewCoff_Rectangular.jl")
+include("./FlowSolver/RenewCoff_Cylindrical.jl")
 include("./FlowSolver/SourceTerm.jl")
 include("./FlowSolver/Solver.jl")
 
@@ -42,6 +43,6 @@ export solvefield
 export SIMPLE
 
 # test
-export to_val_index,toABC,getUV,fieldDiff
+export to_val_index,toABC,getUV,fieldDiff,renew_coff_field!
 
 end # module EasyCFD2D
