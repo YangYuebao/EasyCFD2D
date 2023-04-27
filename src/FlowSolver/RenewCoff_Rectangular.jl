@@ -233,9 +233,9 @@ function renew_coff_field!(::Rectangular,::SecondOrderUpwind, n::Int64, m::Int64
                 continue
             end
             if i == 1
-                val_push[8] = -rho * V[i, j] / 2 - mu * 0.25 * (beta[i, j+1] / Ja[i, j+1] - beta[i, j-1] / Ja[i, j-1]) - mu * 0.5 * (gamma[i, j] / Ja[i, j] + gamma[i-1, j] / Ja[i-1, j])
+                val_push[8] = -rho * V[i, j] / 2 - mu * 0.25 * (beta[i, j+1] / Ja[i, j+1] - beta[i, j-1] / Ja[i, j-1]) - mu * 0.5 * (gamma[i, j] / Ja[i, j] + gamma[i+1, j] / Ja[i+1, j])
                 val_push[11] = +rho * U[i, j] / 4 - mu * 0.25 * (alpha[i, j] / Ja[i, j] + alpha[i, j+1] / Ja[i, j+1]) - mu * 0.25 * (beta[i, j] / Ja[i, j] + beta[i+1, j] / Ja[i+1, j])
-                val_push[3] = -rho * U[i, j] / 4 - mu * 0.25 * (alpha[i, j] / Ja[i, j] + alpha[i, j-1] / Ja[i, j-1]) + mu * 0.25 * (beta[i, j] / Ja[i, j] + beta[i-1, j] / Ja[i-1, j])
+                val_push[3] = -rho * U[i, j] / 4 - mu * 0.25 * (alpha[i, j] / Ja[i, j] + alpha[i, j-1] / Ja[i, j-1]) + mu * 0.25 * (beta[i, j] / Ja[i, j] + beta[i+1, j] / Ja[i+1, j])
                 val_push[7] = -sum(val_push) + bd_coff[1] / bd_coff[2] * sqrt(gamma[i, j])
                 push!(val, val_push[findall(x -> x == true, to_val)]...)
                 push!(b, bd_coff[3] / bd_coff[2] * sqrt(gamma[i, j]) + S[i, j] * 0.5)
@@ -274,6 +274,10 @@ function renew_coff_field!(::Rectangular,::SecondOrderUpwind, n::Int64, m::Int64
     Ap[2:end-1,m]=Ap[2:end-1,m-1]
     Ap[1,2:end-1]=Ap[2,2:end-1]
     Ap[n,2:end-1]=Ap[n-1,2:end-1]
+    Ap[1,1]=sum(Ap[1:2,1:2])/3
+    Ap[n,1]=sum(Ap[n-1:n,1:2])/3
+    Ap[n,m]=sum(Ap[n-1:n,m-1:m])/3
+    Ap[1,m]=sum(Ap[1:2,m-1:m])/3
 end
 
 

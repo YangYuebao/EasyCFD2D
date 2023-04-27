@@ -43,6 +43,6 @@ export solvefield
 export SIMPLE
 
 # test
-export to_val_index,toABC,getUV,fieldDiff,renew_coff_field!
+export to_val_index,toABC,getUV,fieldDiff,renew_coff_field!,getPlace,fieldA
 
 end # module EasyCFD2D

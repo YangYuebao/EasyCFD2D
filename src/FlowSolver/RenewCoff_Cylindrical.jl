@@ -326,4 +326,8 @@ function renew_coff_field!(::Cylindrical,::SecondOrderUpwind, n::Int64, m::Int64
     Ap[2:end-1,m]=Ap[2:end-1,m-1]
     Ap[1,2:end-1]=Ap[2,2:end-1]
     Ap[n,2:end-1]=Ap[n-1,2:end-1]
+    Ap[1,1]=sum(Ap[1:2,1:2])/3
+    Ap[n,1]=sum(Ap[n-1:n,1:2])/3
+    Ap[n,m]=sum(Ap[n-1:n,m-1:m])/3
+    Ap[1,1]=sum(Ap[1:2,m-1:m])/3
 end

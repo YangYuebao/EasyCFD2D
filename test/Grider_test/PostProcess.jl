@@ -16,9 +16,9 @@ function gridPlot(x_uv, y_uv)
     return plt
 end
 
-function showFlow(x_uv,y_uv,uc,vc)
+function showFlow(x_uv,y_uv,uc,vc,k)
     n,m=size(x_uv)
-    plt=quiver(x_uv,y_uv,quiver=(uc,vc))
+    plt=quiver(x_uv,y_uv,quiver=(k*uc,k*vc))
     for i in [1,n]
         plot!(plt,x_uv[i,:],y_uv[i,:])
     end

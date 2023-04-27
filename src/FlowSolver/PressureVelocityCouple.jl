@@ -2,6 +2,7 @@
 
 # SIMPLE算法
 function SIMPLE(::Rectangular,n::Int64,m::Int64,val::Vector{Float64},b::Vector{Float64},rho::Float64,x_u::Matrix{Float64},x_v::Matrix{Float64},y_u::Matrix{Float64},y_v::Matrix{Float64},Apu::Matrix{Float64},Apv::Matrix{Float64},p::Matrix{Float64},U::Matrix{Float64},V::Matrix{Float64},u::Matrix{Float64},v::Matrix{Float64},x_uv::Matrix{Float64},y_uv::Matrix{Float64},Ja::Matrix{Float64},alpha::Matrix{Float64},gamma::Matrix{Float64},phi_symbol::Symbol,bounds::Vector{bound})
+    isSingular::Bool=true  # 如果没有任意一点给定压力，这个就是true
     for j=1:m
         for i=1:n
             #内点
@@ -29,6 +30,7 @@ function SIMPLE(::Rectangular,n::Int64,m::Int64,val::Vector{Float64},b::Vector{F
                 val_push = val_push[findall(x -> x == true, to_val)]
                 push!(val, val_push...)
                 push!(b, bd_coff[3]/bd_coff[1]-p[i,j])
+                isSingular=false
                 continue
             end
             if i == 1 && j == 1
@@ -125,9 +127,18 @@ function SIMPLE(::Rectangular,n::Int64,m::Int64,val::Vector{Float64},b::Vector{F
             end
         end
     end
+    if isSingular
+        println("Singular")
+        val[end-3]=0
+        val[end-4]=1
+        val[end-5]=0
+        val[end-6]=0
+        b[end-1]=0
+    end
 end
 
 function SIMPLE(::Cylindrical,n::Int64,m::Int64,val::Vector{Float64},b::Vector{Float64},rho::Float64,x_u::Matrix{Float64},x_v::Matrix{Float64},y_u::Matrix{Float64},y_v::Matrix{Float64},Apu::Matrix{Float64},Apv::Matrix{Float64},p::Matrix{Float64},U::Matrix{Float64},V::Matrix{Float64},u::Matrix{Float64},v::Matrix{Float64},x_uv::Matrix{Float64},y_uv::Matrix{Float64},Ja::Matrix{Float64},alpha::Matrix{Float64},gamma::Matrix{Float64},phi_symbol::Symbol,bounds::Vector{bound})
+    isSingular::Bool=true  # 如果没有任意一点给定压力，这个就是true
     for j=1:m
         for i=1:n
             S = i==n ? 0 : rho*v[i,j]*Ja[i,j]/y_uv[i,j] # 由坐标线弯曲引起的质量源项
@@ -156,6 +167,7 @@ function SIMPLE(::Cylindrical,n::Int64,m::Int64,val::Vector{Float64},b::Vector{F
                 val_push = val_push[findall(x -> x == true, to_val)]
                 push!(val, val_push...)
                 push!(b, bd_coff[3]/bd_coff[1]-p[i,j])
+                isSingular=false
                 continue
             end
             if i == 1 && j == 1
@@ -251,5 +263,14 @@ function SIMPLE(::Cylindrical,n::Int64,m::Int64,val::Vector{Float64},b::Vector{F
                 continue
             end
         end
+    end
+    
+    if isSingular
+        println("Singular")
+        val[end-3]=0
+        val[end-4]=1
+        val[end-5]=0
+        val[end-6]=0
+        b[end-1]=0
     end
 end

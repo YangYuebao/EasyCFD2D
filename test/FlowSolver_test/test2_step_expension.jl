@@ -47,8 +47,8 @@ begin
 end
 include("../Grider_test/PostProcess.jl")
 
-m = 11
-n = 15
+m = 41
+n = 41
 #x_uv,y_uv=GSGrider(m,n,bounds)
 #x_uv, y_uv = EasyCFD2D.JacobianGrider(m, n, bounds, maxep=1e-5, relax=0.2, displayStep=1,maxcount=100)
 
@@ -69,6 +69,6 @@ display(gridPlot(x_uv, y_uv))
 
 mu = 100.0
 rho = 1.0
-uc, vc, pc = solvefield(Rectangular(), SecondOrderUpwind(), x_uv, y_uv, mu, rho, bounds; abstol=1e-5, maxiter=100)
+uc, vc, pc = solvefield(Rectangular(), SecondOrderUpwind(), x_uv, y_uv, mu, rho, bounds; abstol=1e-5, maxiter=1000)
 lambda=1.0
 showFlow(x_uv,y_uv,lambda*uc,lambda*vc)
