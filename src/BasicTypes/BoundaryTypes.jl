@@ -7,6 +7,7 @@ struct FDOutlet <: AbstractBoundType end #fully developed outlet
 struct velocityInlet <: AbstractBoundType end
 struct pressureInlet <: AbstractBoundType end
 struct symetryAxis <: AbstractBoundType end
+struct periodical <: AbstractBoundType end
 struct generalBound <: AbstractBoundType end
 
 struct bound <: AbstractBound

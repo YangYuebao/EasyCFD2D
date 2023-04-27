@@ -3,20 +3,26 @@ function solvefield(coodinate::AbstractCoodinateTypes, convectionSecheme::T, x_u
     u, v, p, x_u, y_u, x_v, y_v, alpha, beta, gamma, Ja = fieldA(x_uv, y_uv)
     row, col = index_generation(n, m, getPlace(convectionSecheme))
     rowp, colp = index_generation(n, m, getPlace(Point5()))
+    U, V = getUV(u, v, x_u, x_v, y_u, y_v)
     err::Float64 = Inf
     count::Int64 = 0
+    flag::Int64 =0
     #=
         mu = 1.0
         rho = 1.0
     =#
-    while err > abstol && count < maxiter
+    while flag<5 && count < maxiter
+        if err < abstol
+            flag+=1
+        else 
+            flag=0
+        end
         valu = Vector{Float64}(undef, 0)
         bu = Vector{Float64}(undef, 0)
         valv = Vector{Float64}(undef, 0)
         bv = Vector{Float64}(undef, 0)
         Apu = zeros(n, m)
         Apv = zeros(n, m)
-        U, V = getUV(u, v, x_u, x_v, y_u, y_v)
         p_u, p_v = fieldDiff(p)
 
         Su = p_v .* y_u - p_u .* y_v
@@ -27,6 +33,7 @@ function solvefield(coodinate::AbstractCoodinateTypes, convectionSecheme::T, x_u
         renew_coff_field!(coodinate,convectionSecheme, n, m, mu, rho, valv, bv, alpha, beta, gamma, Ja,x_u,x_v,y_u,y_v, U, V, u, v, x_uv, y_uv, v, Sv, Apv, :v, bounds)
 
         A = sparse(row, col, valu)
+        temp=u[:,:]
         u = reshape(A \ bu, n, m)
         A = sparse(row, col, valv)
         v = reshape(A \ bv, n, m)
@@ -39,10 +46,16 @@ function solvefield(coodinate::AbstractCoodinateTypes, convectionSecheme::T, x_u
 
         A = sparse(rowp, colp, valp)
 
-        p += reshape(A \ bp, n, m)
+        dp = reshape(A \ bp, n, m)
+
+        
+        dpu,dpv=fieldDiff(dp)
+        U += -(y_v.^2 ./ Apu + x_v.^2 ./ Apv).*dpu
+        V += -(y_u.^2 ./ Apu + x_u.^2 ./ Apv).*dpv
+        p+=dp
         
         count+=1
-        err=maximum(abs.(bp))
+        err=maximum(abs.(u-temp)+abs.(dp))
     end
-    return u,v,p
+    return u,v,p,count
 end

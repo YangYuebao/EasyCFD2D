@@ -260,9 +260,9 @@ function renew_coff_field!(::Cylindrical,::SecondOrderUpwind, n::Int64, m::Int64
                 continue
             end
             if i == 1
-                val_push[8] = -rho * V[i, j] / 2 - mu * 0.25 * (beta[i, j+1] / Ja[i, j+1] - beta[i, j-1] / Ja[i, j-1]) - mu * 0.5 * (gamma[i, j] / Ja[i, j] + gamma[i-1, j] / Ja[i-1, j])
+                val_push[8] = -rho * V[i, j] / 2 - mu * 0.25 * (beta[i, j+1] / Ja[i, j+1] - beta[i, j-1] / Ja[i, j-1]) - mu * 0.5 * (gamma[i, j] / Ja[i, j] + gamma[i+1, j] / Ja[i+1, j])
                 val_push[11] = +rho * U[i, j] / 4 - mu * 0.25 * (alpha[i, j] / Ja[i, j] + alpha[i, j+1] / Ja[i, j+1]) - mu * 0.25 * (beta[i, j] / Ja[i, j] + beta[i+1, j] / Ja[i+1, j])
-                val_push[3] = -rho * U[i, j] / 4 - mu * 0.25 * (alpha[i, j] / Ja[i, j] + alpha[i, j-1] / Ja[i, j-1]) + mu * 0.25 * (beta[i, j] / Ja[i, j] + beta[i-1, j] / Ja[i-1, j])
+                val_push[3] = -rho * U[i, j] / 4 - mu * 0.25 * (alpha[i, j] / Ja[i, j] + alpha[i, j-1] / Ja[i, j-1]) + mu * 0.25 * (beta[i, j] / Ja[i, j] + beta[i+1, j] / Ja[i+1, j])
                 val_push[7] = -sum(val_push) + bd_coff[1] / bd_coff[2] * sqrt(gamma[i, j])
                 
 

@@ -36,5 +36,10 @@ function initialField(n,m)
     u_field=zeros(n,m)
     v_field=zeros(n,m)
     p_field=zeros(n,m)
+    #=
+    u_field=rand(n,m).-0.5
+    v_field=rand(n,m).-0.5
+    p_field=rand(n,m).-0.5
+    =#
     return u_field,v_field,p_field
 end

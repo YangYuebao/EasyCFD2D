@@ -39,12 +39,14 @@ begin
 end
 
 begin
-    m = 20
-    n = 20
+    m = 40
+    n = 40
+    include("../Grider_test/PostProcess.jl")
     #x_uv,y_uv=GSGrider(m,n,bounds)
     x_uv, y_uv = EasyCFD2D.JacobianGrider(n, m, bounds, maxep=1e-3, relax=0.2, displayStep=10)
     #gridPlot(x_uv,y_uv)
 end
 
-ur, vr, pr = solvefield(Rectangular(), SecondOrderUpwind(), x_uv, y_uv, mu, rho, bounds; abstol=1e-5, maxiter=100)
-display(quiver(x_uv,y_uv,quiver=(ur,vr)))
+ur, vr, pr,count = solvefield(Rectangular(), SecondOrderUpwind(), x_uv, y_uv, mu, rho, bounds; abstol=1e-5, maxiter=100)
+
+showFlow(x_uv,y_uv,ur,vr,0.1)

@@ -27,17 +27,17 @@ begin
     t4 = [0, 5]
 
     bounds = Vector{bound}(undef, 4)
-    bounds[1] = bound(bd1, t1, pressureInlet(), 10)
-    bounds[2] = bound(bd2, t2, symetryAxis())
-    bounds[3] = bound(bd3, t3, FDOutlet(), 0)
-    bounds[4] = bound(bd4, t4, stillWall())
+    bounds[1] = bound(bd1, t1, stillWall())
+    bounds[2] = bound(bd2, t2, pressureInlet(), 40)
+    bounds[3] = bound(bd3, t3, stillWall())
+    bounds[4] = bound(bd4, t4, FDOutlet(),0)
 end
 
-#include("../Grider_test/PostProcess.jl")
+include("../Grider_test/PostProcess.jl")
 
 begin
-    m = 20
-    n = 20
+    m = 21
+    n = 21
     #x_uv,y_uv=GSGrider(m,n,bounds)
     x_uv, y_uv = EasyCFD2D.JacobianGrider(n, m, bounds, maxep=1e-3, relax=0.2, displayStep=10)
     #gridPlot(x_uv,y_uv)
@@ -45,8 +45,9 @@ end
 
 mu = 1.0
 rho = 1.0
-uc, vc, pc = solvefield(Cylindrical(), SecondOrderUpwind(), x_uv, y_uv, mu, rho, bounds; abstol=1e-5, maxiter=100)
-display(quiver(x_uv,y_uv,quiver=(uc,vc)))
+#uc, vc, pc = solvefield(Cylindrical(), SecondOrderUpwind(), x_uv, y_uv, mu, rho, bounds; abstol=1e-5, maxiter=100)
+#display(quiver(x_uv,y_uv,quiver=(uc,vc)))
 
-ur, vr, pr = solvefield(Rectangular(), SecondOrderUpwind(), x_uv, y_uv, mu, rho, bounds; abstol=1e-5, maxiter=100)
-display(quiver(x_uv,y_uv,quiver=(ur,vr)))
+ur, vr, pr,count = solvefield(Rectangular(), SecondOrderUpwind(), x_uv, y_uv, mu, rho, bounds; abstol=1e-5, maxiter=100)
+maximum(vr)
+#showFlow(x_uv,y_uv,ur,vr,0.002)

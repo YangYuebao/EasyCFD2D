@@ -2,32 +2,43 @@ using EasyCFD2D,SparseArrays
 
 begin
     L=1.0
-    mu=1.0
+    mu=1/100
     rho=1.0
     u0=0.01 
 end
 
 begin
+    function myfun(x,x1,y1)
+        if x>=0 && x<=x1
+            return y1/x1*x
+        elseif x>1-x1 && x<=1
+            return 1-y1/x1*(1-x)
+        else
+            return 0.5+(x-0.5)*(1-2*y1)/(1-2*x1)
+        end
+    end
+    x1=0.2
+    y1=0.05
     function bd1(t)
-        [0, L - t]
+        [0, L*(1 - myfun(t/L,x1,y1))]
     end
     t1 = [0, L]
 
     #bd2 t in [-1,1]
     function bd2(t)
-        [t, 0]
+        [L*myfun(t/L,x1,y1), 0]
     end
     t2 = [0, L]
 
     #bd3 t in [0,pi/2]
     function bd3(t)
-        [L, t]
+        [L, L*myfun(t/L,x1,y1)]
     end
     t3 = [0, L]
 
     #bd4 t in [2,-2]
     function bd4(t)
-        [L - t, L]
+        [L*(1 - myfun(t/L,x1,y1)), L]
     end
     t4 = [0, L]
 
@@ -39,11 +50,11 @@ begin
 end
 
 begin
-    m = 30
-    n = 30
+    m = 35
+    n = 35
     #x_uv,y_uv=GSGrider(m,n,bounds)
     x_uv, y_uv = EasyCFD2D.JacobianGrider(n, m, bounds, maxep=1e-3, relax=0.2, displayStep=10)
-    #gridPlot(x_uv,y_uv)
+    gridPlot(x_uv,y_uv)
 end
 begin
     coodinate=Rectangular()
@@ -70,7 +81,7 @@ begin
 
     renew_coff_field!(coodinate,convectionSecheme, n, m, mu, rho, valv, bv, alpha, beta, gamma, Ja,x_u,x_v,y_u,y_v, U, V, u, v, x_uv, y_uv, v, Sv, Apv, :v, bounds)
 
-    lambda=0.4
+    lambda=1.0
     A = sparse(row, col, valu)
     u = lambda*reshape(A \ bu, n, m)+(1-lambda)*u
     A = sparse(row, col, valv)
@@ -82,8 +93,20 @@ begin
 
     SIMPLE(coodinate, n, m, valp, bp, rho, x_u,x_v,y_u,y_v, Apu, Apv, p, U, V,u,v,x_uv,y_uv,Ja, alpha, gamma, :p, bounds)
 
-    A = sparse(rowp, colp, valp)
+    Ap = sparse(rowp, colp, valp)
 
-    p += reshape(A \ bp, n, m)
+    dp = reshape(Ap \ bp, n, m)
+    #show(Matrix(Ap))
+    dpu,dpv=fieldDiff(dp)
+    U += -(y_v.^2 ./ Apu + x_v.^2 ./ Apv).*dpu
+    V += -(y_u.^2 ./ Apu + x_u.^2 ./ Apv).*dpv
+    p+=dp
+    
+    Ux,Uy=fieldDiff(U)
+    Vx,Vy=fieldDiff(V)
+    Ux+Vy
     #showFlow(x_uv,y_uv,u,v,0.1)
 end
+
+output([Matrix(Ap) bp])
+showBound(bounds[4],10)
